@@ -124,6 +124,7 @@ export function fetchAnswerSteaming(
       history: JSON.stringify(history),
       conversation_id: conversationId,
     };
+    console.log('fetchAnswerSteaming, body: ', JSON.stringify(body));
 
     fetch(apiHost + '/stream', {
       method: 'POST',
@@ -165,6 +166,7 @@ export function fetchAnswerSteaming(
               data: line,
             });
 
+            console.log('messageEvent: data:', line);
             onEvent(messageEvent); // handle each message
           }
 

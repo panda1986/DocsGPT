@@ -54,7 +54,10 @@ def call_openai_api(docs, folder_name):
         os.environ["OPENAI_API_TYPE"] = "azure"
         openai_embeddings = OpenAIEmbeddings(model=os.environ.get("AZURE_EMBEDDINGS_DEPLOYMENT_NAME"))
     else:
-        openai_embeddings = OpenAIEmbeddings()
+        print("Open_ai_func, Using OpenAI API embeddings, set openai_api_key=%s, openai_api_base=%s" % (os.environ.get("OPENAI_API_KEY"), os.environ.get("OPENAI_API_BASE")))
+        openai_embeddings = OpenAIEmbeddings(
+                    openai_api_key=os.environ.get("OPENAI_API_KEY"),
+                    openai_api_base=os.environ.get("OPENAI_API_BASE"))
     store = FAISS.from_documents(docs_test, openai_embeddings)
     # store_pine = Pinecone.from_documents(docs_test, OpenAIEmbeddings(), index_name=index_name)
 

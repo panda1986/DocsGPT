@@ -17,8 +17,7 @@ from application.vectorstore.vector_creator import VectorCreator
 from application.llm.llm_creator import LLMCreator
 from application.error import bad_request
 
-
-
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s.%(msecs)03d - [%(levelname)s] %(pathname)s:%(lineno)d - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger(__name__)
 
 mongo = MongoClient(settings.MONGO_URI)
@@ -114,8 +113,8 @@ def is_azure_configured():
 
 
 def complete_stream(question, docsearch, chat_history, api_key, conversation_id):
+    logger.debug('complete_stream, question:%s, chat_history:%s, api_key:%s, conversation_id:%s' % (question, chat_history, api_key, conversation_id))
     llm = LLMCreator.create_llm(settings.LLM_NAME, api_key=api_key)
-    
 
     docs = docsearch.search(question, k=2)
     if settings.LLM_NAME == "llama.cpp":
@@ -132,6 +131,7 @@ def complete_stream(question, docsearch, chat_history, api_key, conversation_id)
         else:
             data = json.dumps({"type": "source", "doc": doc.page_content})
             source_log_docs.append({"title": doc.page_content, "text": doc.page_content})
+        logger.debug('complete_stream, yield data:%s' % data)    
         yield f"data:{data}\n\n"
 
     if len(chat_history) > 1:
@@ -143,6 +143,7 @@ def complete_stream(question, docsearch, chat_history, api_key, conversation_id)
                 tokens_batch = count_tokens(i["prompt"]) + count_tokens(i["response"])
                 if tokens_current_history + tokens_batch < settings.TOKENS_MAX_HISTORY:
                     tokens_current_history += tokens_batch
+                    logger.debug('complete_stream, tokens_current_history:%s, tokens_batch:%s, append history prompt:%s, response:%s' % (tokens_current_history, tokens_batch, i["prompt"], i["response"]))
                     messages_combine.append({"role": "user", "content": i["prompt"]})
                     messages_combine.append({"role": "system", "content": i["response"]})
     messages_combine.append({"role": "user", "content": question})
@@ -150,9 +151,11 @@ def complete_stream(question, docsearch, chat_history, api_key, conversation_id)
     response_full = ""
     completion = llm.gen_stream(model=gpt_model, engine=settings.AZURE_DEPLOYMENT_NAME,
                                 messages=messages_combine)
+    logger.debug('complete_stream, completion:%s' % completion)
     for line in completion:
         data = json.dumps({"answer": str(line)})
         response_full += str(line)
+        logger.debug('complete_stream, yield data:%s' % data)
         yield f"data: {data}\n\n"
 
     # save conversation to database
@@ -193,6 +196,7 @@ def complete_stream(question, docsearch, chat_history, api_key, conversation_id)
 @answer.route("/stream", methods=["POST"])
 def stream():
     data = request.get_json()
+    logger.debug('got a stream request, data:%s' % data)
     # get parameter from url question
     question = data["question"]
     history = data["history"]
@@ -214,6 +218,7 @@ def stream():
         vectorstore = get_vectorstore({"active_docs": data["active_docs"]})
     else:
         vectorstore = ""
+    logger.debug('routes call create_vectorstore, settings.VECTOR_STORE:%s, vectorstore:%s, embeddings_key:%s' % (settings.VECTOR_STORE, vectorstore, embeddings_key))   
     docsearch = VectorCreator.create_vectorstore(settings.VECTOR_STORE, vectorstore, embeddings_key)
 
     return Response(

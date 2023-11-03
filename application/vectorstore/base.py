@@ -20,6 +20,7 @@ class BaseVectorStore(ABC):
         return settings.OPENAI_API_BASE and settings.OPENAI_API_VERSION and settings.AZURE_DEPLOYMENT_NAME
 
     def _get_embeddings(self, embeddings_name, embeddings_key=None):
+        print("BaseVectorStore, _get_embeddings, embeddings_name:%s, embeddings_key:%s" % (embeddings_name, embeddings_key))
         embeddings_factory = {
             "openai_text-embedding-ada-002": OpenAIEmbeddings,
             "huggingface_sentence-transformers/all-mpnet-base-v2": HuggingFaceEmbeddings,
@@ -37,8 +38,10 @@ class BaseVectorStore(ABC):
                     model=settings.AZURE_EMBEDDINGS_DEPLOYMENT_NAME
                 )
             else:
+                print("Using OpenAI API embeddings, set openai_api_key=%s, openai_api_base=%s" % (embeddings_key, settings.OPENAI_API_BASE))
                 embedding_instance = embeddings_factory[embeddings_name](
-                    openai_api_key=embeddings_key
+                    openai_api_key=embeddings_key,
+                    openai_api_base=settings.OPENAI_API_BASE
                 )
         elif embeddings_name == "cohere_medium":
             embedding_instance = embeddings_factory[embeddings_name](

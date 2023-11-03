@@ -27,6 +27,7 @@ export const fetchAnswer = createAsyncThunk<Answer, { question: string }>(
           state.conversation.conversationId,
           (event) => {
             const data = JSON.parse(event.data);
+            console.log("fetchAnswerSteaming, got event data: ", event.data)
 
             // check if the 'end' event has been received
             if (data.type === 'end') {
@@ -44,8 +45,13 @@ export const fetchAnswer = createAsyncThunk<Answer, { question: string }>(
               let result;
               if (data.metadata && data.metadata.title) {
                 const titleParts = data.metadata.title.split('/');
+                let title = titleParts[titleParts.length - 1];
+                // inputs/srs/en-us/version-6.0/doc/hls.md, trim the prefix of inputs/srs/
+                if (data.metadata.title.startsWith('inputs/srs/')) {
+                  title = titleParts.slice(2).join('/');
+                }
                 result = {
-                  title: titleParts[titleParts.length - 1],
+                  title: title,
                   text: data.doc,
                 };
               } else {
