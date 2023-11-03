@@ -6,6 +6,7 @@ from urllib.parse import urljoin
 
 import nltk
 import requests
+import ssl
 
 from application.core.settings import settings
 from application.parser.file.bulk import SimpleDirectoryReader
@@ -13,6 +14,7 @@ from application.parser.open_ai_func import call_openai_api
 from application.parser.schema.base import Document
 from application.parser.token_func import group_split
 
+ssl._create_default_https_context = ssl._create_unverified_context
 try:
     nltk.download('punkt', quiet=True)
     nltk.download('averaged_perceptron_tagger', quiet=True)
