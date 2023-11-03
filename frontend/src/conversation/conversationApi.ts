@@ -151,6 +151,7 @@ export function fetchAnswerSteaming(
           counterrr += 1;
 
           const chunk = decoder.decode(value);
+          console.log('origin chunk: ', chunk);
 
           const lines = chunk.split('\n');
 

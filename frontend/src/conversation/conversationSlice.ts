@@ -26,7 +26,13 @@ export const fetchAnswer = createAsyncThunk<Answer, { question: string }>(
           state.conversation.queries,
           state.conversation.conversationId,
           (event) => {
-            const data = JSON.parse(event.data);
+            let data = null;
+            try {
+              data = JSON.parse(event.data);
+            } catch (error) {
+              console.error(`Failed to parse event data: ${event.data}, error is ${error}}`);
+              return;
+            }
             console.log("fetchAnswerSteaming, got event data: ", event.data)
 
             // check if the 'end' event has been received
