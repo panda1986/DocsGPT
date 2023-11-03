@@ -3,11 +3,10 @@ import { useSelector } from 'react-redux';
 import Edit from '../assets/edit.svg';
 import Exit from '../assets/exit.svg';
 import Message from '../assets/message.svg';
-import CheckMark from '../assets/checkmark.svg';
+import CheckMark2 from '../assets/checkMark2.svg';
 import Trash from '../assets/trash.svg';
 
 import { selectConversationId } from '../preferences/preferenceSlice';
-import { useOutsideAlerter } from '../hooks';
 
 interface ConversationProps {
   name: string;
@@ -31,15 +30,15 @@ export default function ConversationTile({
 
   const [isEdit, setIsEdit] = useState(false);
   const [conversationName, setConversationsName] = useState('');
-  useOutsideAlerter(
-    tileRef,
-    () =>
-      handleSaveConversation({
-        id: conversationId || conversation.id,
-        name: conversationName,
-      }),
-    [conversationName],
-  );
+  // useOutsideAlerter(
+  //   tileRef,
+  //   () =>
+  //     handleSaveConversation({
+  //       id: conversationId || conversation.id,
+  //       name: conversationName,
+  //     }),
+  //   [conversationName],
+  // );
 
   useEffect(() => {
     setConversationsName(conversation.name);
@@ -68,7 +67,7 @@ export default function ConversationTile({
       onClick={() => {
         selectConversation(conversation.id);
       }}
-      className={`my-auto mx-4 mt-4 flex h-12 cursor-pointer items-center justify-between gap-4 rounded-3xl hover:bg-gray-100 ${
+      className={`my-auto mx-4 mt-4 flex h-9 cursor-pointer items-center justify-between gap-4 rounded-3xl hover:bg-gray-100 ${
         conversationId === conversation.id ? 'bg-gray-100' : ''
       }`}
     >
@@ -77,7 +76,7 @@ export default function ConversationTile({
           conversationId === conversation.id ? 'w-[75%]' : 'w-[95%]'
         } gap-4`}
       >
-        <img src={Message} className="ml-2 w-5"></img>
+        <img src={Message} className="ml-4 w-5"></img>
         {isEdit ? (
           <input
             autoFocus
@@ -92,10 +91,10 @@ export default function ConversationTile({
           </p>
         )}
       </div>
-      {conversationId === conversation.id ? (
+      {conversationId === conversation.id && (
         <div className="flex">
           <img
-            src={isEdit ? CheckMark : Edit}
+            src={isEdit ? CheckMark2 : Edit}
             alt="Edit"
             className="mr-2 h-4 w-4 cursor-pointer hover:opacity-50"
             id={`img-${conversation.id}`}
@@ -122,7 +121,7 @@ export default function ConversationTile({
             }}
           />
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

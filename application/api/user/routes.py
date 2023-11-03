@@ -84,6 +84,19 @@ def api_feedback():
     )
     return {"status": http.client.responses.get(response.status_code, "ok")}
 
+@user.route("/api/delete_by_ids", methods=["get"])
+def delete_by_ids():
+    """Delete by ID. These are the IDs in the vectorstore"""
+
+    ids = request.args.get("path")
+    if not ids:
+        return {"status": "error"}
+
+    if settings.VECTOR_STORE == "faiss":
+        result = vectors_collection.delete_index(ids=ids)
+        if result:
+            return {"status": "ok"}
+    return {"status": "error"}
 
 @user.route("/api/delete_old", methods=["get"])
 def delete_old():
@@ -140,7 +153,9 @@ def upload_file():
             os.makedirs(save_dir)
 
         file.save(os.path.join(save_dir, filename))
-        task = ingest.delay(settings.UPLOAD_FOLDER, [".rst", ".md", ".pdf", ".txt"], job_name, filename, user)
+        task = ingest.delay(settings.UPLOAD_FOLDER, [".rst", ".md", ".pdf", ".txt", ".docx", 
+        ".csv", ".epub", ".html", ".mdx"],
+         job_name, filename, user)
         # task id
         task_id = task.id
         return {"status": "ok", "task_id": task_id}
