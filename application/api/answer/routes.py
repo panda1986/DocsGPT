@@ -178,15 +178,18 @@ def complete_stream(question, docsearch, chat_history, api_key, conversation_id)
                             {"role": "user", "content": "Summarise following conversation in no more than 3 words, "
                                                         "respond ONLY with the summary, use the same language as the "
                                                         "system"}]
-
-        completion = llm.gen(model=gpt_model, engine=settings.AZURE_DEPLOYMENT_NAME,
+        try:
+            completion = llm.gen(model=gpt_model, engine=settings.AZURE_DEPLOYMENT_NAME,
                              messages=messages_summary, max_tokens=30)
-        conversation_id = conversations_collection.insert_one(
-            {"user": "local",
-             "date": datetime.datetime.utcnow(),
-             "name": completion,
-             "queries": [{"prompt": question, "response": response_full, "sources": source_log_docs}]}
-        ).inserted_id
+            conversation_id = conversations_collection.insert_one(
+                {"user": "local",
+                "date": datetime.datetime.utcnow(),
+                "name": completion,
+                "queries": [{"prompt": question, "response": response_full, "sources": source_log_docs}]}
+            ).inserted_id
+        except Exception as e:
+            logger.error('complete_stream, llm.gen, exception:%s' % e)
+            traceback.print_exc()
 
     # send data.type = "end" to indicate that the stream has ended as json
     data = json.dumps({"type": "id", "id": str(conversation_id)})
