@@ -1,7 +1,7 @@
 import { Answer, FEEDBACK } from './conversationModels';
 import { Doc } from '../preferences/preferenceApi';
 
-const apiHost = import.meta.env.VITE_API_HOST || 'https://docsapi.arc53.com';
+const apiHost = import.meta.env.VITE_API_HOST;
 
 export function fetchAnswerApi(
   question: string,
