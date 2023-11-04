@@ -17,7 +17,7 @@ from application.vectorstore.vector_creator import VectorCreator
 from application.llm.llm_creator import LLMCreator
 from application.error import bad_request
 
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s.%(msecs)03d - [%(levelname)s] %(pathname)s:%(lineno)d - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+logging.basicConfig(filename='application.log', filemode='a', level=logging.DEBUG, format='%(asctime)s.%(msecs)03d - [%(levelname)s] %(pathname)s:%(lineno)d - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger(__name__)
 
 mongo = MongoClient(settings.MONGO_URI)
