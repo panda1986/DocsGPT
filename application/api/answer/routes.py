@@ -32,8 +32,8 @@ if settings.LLM_NAME == "gpt4":
 elif settings.LLM_NAME == "anthropic":
     gpt_model = 'claude-2'
 else:
-    gpt_model = 'gpt-3.5-turbo'
-    #gpt_model = 'gpt-4'
+    #gpt_model = 'gpt-3.5-turbo'
+    gpt_model = 'gpt-4'
 
 # load the prompts
 current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -125,8 +125,8 @@ def complete_stream(question, docsearch, chat_history, api_key, conversation_id)
         docs = [docs[0]]
     # join all page_content together with a newline
     docs_together = "\n".join([doc.page_content for doc in docs])
-    #p_chat_combine = chat_combine_template.replace("{summaries}", docs_together)
-    messages_combine = [{"role": "system", "content": chat_combine_template}]
+    p_chat_combine = chat_combine_template.replace("{summaries}", docs_together)
+    messages_combine = [{"role": "system", "content": p_chat_combine}]
     source_log_docs = []
     for doc in docs:
         if doc.metadata:
@@ -274,8 +274,8 @@ def api_answer():
         docs = docsearch.search(question, k=2)
         # join all page_content together with a newline
         docs_together = "\n".join([doc.page_content for doc in docs])
-        #p_chat_combine = chat_combine_template.replace("{summaries}", docs_together)
-        messages_combine = [{"role": "system", "content": chat_combine_template}]
+        p_chat_combine = chat_combine_template.replace("{summaries}", docs_together)
+        messages_combine = [{"role": "system", "content": p_chat_combine}]
         source_log_docs = []
         for doc in docs:
             if doc.metadata:
