@@ -274,11 +274,11 @@ export default function Navigation({ navOpen, setNavOpen }: NavigationProps) {
                 } ml-auto mr-3 w-3 transition-all`}
               />
             </div>
-            <img
+            {/* <img
               className="mt-2 h-9 w-9 hover:cursor-pointer"
               src={UploadIcon}
               onClick={() => setUploadModalState('ACTIVE')}
-            ></img>
+            ></img> */}
             {isDocsListOpen && (
               <div className="absolute top-12 left-0 right-6 z-10 ml-2 mr-4 max-h-52 overflow-y-scroll bg-white shadow-lg">
                 {docs ? (

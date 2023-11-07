@@ -155,7 +155,8 @@ const ConversationBubble = forwardRef<
                               : 'text-[#007DFF]'
                           }`}
                         >
-                          {index + 1}. {source.title.substring(0, 45)}
+                          {/* {index + 1}. {source.title.substring(0, 45)} */}
+                          {index + 1}. {source.title}
                         </p>
                       </div>
                     ))}
@@ -282,7 +283,49 @@ const ConversationBubble = forwardRef<
             </p>
 
             <div className="m-2 rounded-xl border-2 border-gray-200 bg-white p-2">
-              <p className="text-black">{sources[openSource].text}</p>
+              <ReactMarkdown 
+              className="max-w-screen-md whitespace-pre-wrap break-words"
+              components={{
+                code({ node, inline, className, children, ...props }) {
+                  const match = /language-(\w+)/.exec(className || '');
+
+                  return !inline && match ? (
+                    <SyntaxHighlighter
+                      PreTag="div"
+                      language={match[1]}
+                      {...props}
+                      style={vscDarkPlus}
+                    >
+                      {String(children).replace(/\n$/, '')}
+                    </SyntaxHighlighter>
+                  ) : (
+                    <code className={className ? className : ''} {...props}>
+                      {children}
+                    </code>
+                  );
+                },
+                ul({ children }) {
+                  return (
+                    <ul
+                      className={`list-inside list-disc whitespace-normal pl-4 ${classes.list}`}
+                    >
+                      {children}
+                    </ul>
+                  );
+                },
+                ol({ children }) {
+                  return (
+                    <ol
+                      className={`list-inside list-decimal whitespace-normal pl-4 ${classes.list}`}
+                    >
+                      {children}
+                    </ol>
+                  );
+                },
+              }}>
+                {sources[openSource].text}
+              </ReactMarkdown>
+              {/* <p className="text-black">{sources[openSource].text}</p> */}
             </div>
           </div>
         )}

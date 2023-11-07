@@ -7,9 +7,9 @@ class FaissStore(BaseVectorStore):
 
     def __init__(self, path, embeddings_key, docs_init=None):
         super().__init__()
-        logging.info("FaissStore, __init__, path:%s, embeddings_key:%s, docs_init:%s" % (path, embeddings_key, docs_init))
         self.path = path
         embeddings = self._get_embeddings(settings.EMBEDDINGS_NAME, embeddings_key)
+        logging.info("FaissStore, __init__, path:%s, embeddings:%s, docs_init:%s" % (path, embeddings, docs_init))
         if docs_init:
             self.docsearch = FAISS.from_documents(
                 docs_init, embeddings
@@ -21,15 +21,19 @@ class FaissStore(BaseVectorStore):
         self.assert_embedding_dimensions(embeddings)
 
     def search(self, *args, **kwargs):
+        logging.info("FaissStore, search, args:%s, kwargs:%s" % (args, kwargs))
         return self.docsearch.similarity_search(*args, **kwargs)
 
     def add_texts(self, *args, **kwargs):
+        logging.info("FaissStore, add_texts, args:%s, kwargs:%s" % (args, kwargs))
         return self.docsearch.add_texts(*args, **kwargs)
 
     def save_local(self, *args, **kwargs):
+        logging.info("FaissStore, save_local, args:%s, kwargs:%s" % (args, kwargs))
         return self.docsearch.save_local(*args, **kwargs)
 
     def delete_index(self, *args, **kwargs):
+        logging.info("FaissStore, delete_index, args:%s, kwargs:%s" % (args, kwargs))
         return self.docsearch.delete(*args, **kwargs)
 
     def assert_embedding_dimensions(self, embeddings):

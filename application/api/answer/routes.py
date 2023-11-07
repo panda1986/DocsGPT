@@ -33,7 +33,8 @@ elif settings.LLM_NAME == "anthropic":
     gpt_model = 'claude-2'
 else:
     #gpt_model = 'gpt-3.5-turbo'
-    gpt_model = 'gpt-4'
+    #gpt_model = 'gpt-4'
+    gpt_model = 'gpt-4-1106-preview'
 
 # load the prompts
 current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -120,7 +121,10 @@ def complete_stream(question, docsearch, chat_history, api_key, conversation_id)
     logger.debug('complete_stream, question:%s, chat_history:%s, api_key:%s, conversation_id:%s' % (question, chat_history, api_key, conversation_id))
     llm = LLMCreator.create_llm(settings.LLM_NAME, api_key=api_key)
 
-    docs = docsearch.search(question, k=2)
+    docs = docsearch.search(question, k=4)
+    for doc in docs:
+        logging.info("docsearch got doc:%s" % doc)
+
     if settings.LLM_NAME == "llama.cpp":
         docs = [docs[0]]
     # join all page_content together with a newline
@@ -160,7 +164,6 @@ def complete_stream(question, docsearch, chat_history, api_key, conversation_id)
         for line in completion:
             data = json.dumps({"answer": str(line)})
             response_full += str(line)
-            logger.debug('complete_stream, yield data:%s' % data)
             yield f"data: {data}\n\n"
     except Exception as e:
         logger.error('complete_stream, llm.gen_stream, exception:%s' % e)

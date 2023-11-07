@@ -50,12 +50,13 @@ export const fetchAnswer = createAsyncThunk<Answer, { question: string }>(
               // check if data.metadata exists
               let result;
               if (data.metadata && data.metadata.title) {
-                const titleParts = data.metadata.title.split('/');
-                let title = titleParts[titleParts.length - 1];
+                let title = data.metadata.title;
+                // const titleParts = data.metadata.title.split('/');
+                // let title = titleParts[titleParts.length - 1];
                 // inputs/srs/en-us/version-6.0/doc/hls.md, trim the prefix of inputs/srs/
-                if (data.metadata.title.startsWith('inputs/srs/')) {
-                  title = titleParts.slice(2).join('/');
-                }
+                // if (data.metadata.title.startsWith('inputs/srs/')) {
+                //   title = titleParts.slice(2).join('/');
+                // }
                 result = {
                   title: title,
                   text: data.doc,
